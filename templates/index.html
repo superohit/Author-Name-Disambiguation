@@ -1,0 +1,284 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Author Name Disambiguation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .container { max-width: 900px; }
+        .header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+        }
+        .card { margin-bottom: 1.5rem; }
+        .author-cluster { border-left: 5px solid #0d6efd; }
+        .publication-details { font-size: 0.9rem; color: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="header text-center">
+            <h1>Author Name Disambiguation</h1>
+            <p class="lead">Enter an author's name to find and group their publications from the database.</p>
+        </div>
+
+        <form action="/" method="post">
+            <div class="input-group mb-4 shadow-sm">
+                <input type="text" name="author_name" class="form-control form-control-lg" placeholder="e.g., 'Smith, John' or 'wei wang'" required>
+                <button class="btn btn-primary" type="submit">Disambiguate</button>
+            </div>
+        </form>
+
+        {% if author_name %}
+            <h2 class="mb-3">Results for "{{ author_name }}"</h2>
+            <p>Found <strong>{{ total_publications }}</strong> publications across <strong>{{ cluster_count }}</strong> potential unique author(s).</p>
+        {% endif %}
+
+        {% for cluster_id, publications in results.items() %}
+            <div class="card shadow-sm author-cluster">
+                <div class="card-header bg-light">
+                    <strong>Potential Author {{ loop.index }}</strong>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for pub in publications %}
+                            <li class="list-group-item">
+                                <h6 class="mb-1">{{ pub.title }} ({{ pub.year }})</h6>
+                                <div class="publication-details">
+                                    <strong>Author As Written:</strong> {{ pub.author_name }} <br>
+                                    <strong>Venue:</strong> {{ pub.venue }} <br>
+                                    <strong>Affiliation:</strong> {{ pub.affiliation }}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+</body>
+</html> -->
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Author Disambiguation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .container { max-width: 900px; }
+        .header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+        }
+        .card { margin-bottom: 1.5rem; }
+        .author-cluster { border-left: 5px solid #0d6efd; }
+        .publication-details { font-size: 0.9rem; color: #6c757d; }
+        .form-label { font-weight: 500; }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <div class="header text-center">
+            <h1>Advanced Author Disambiguation</h1>
+            <p class="lead">Provide author details to find and group their publications.</p>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Search Criteria</h5>
+                <form action="/" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="last_name" class="form-label">Last Name (Required)</label>
+                            <input type="text" id="last_name" name="last_name" class="form-control" value="{{ search_criteria.get('last_name', '') }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="first_name" class="form-label">First Name / Initial(s)</label>
+                            <input type="text" id="first_name" name="first_name" class="form-control" value="{{ search_criteria.get('first_name', '') }}">
+                        </div>
+                        <div class="col-md-8">
+                            <label for="affiliation" class="form-label">Affiliation (e.g., Stanford University)</label>
+                            <input type="text" id="affiliation" name="affiliation" class="form-control" value="{{ search_criteria.get('affiliation', '') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="country" class="form-label">Country</label>
+                            <input type="text" id="country" name="country" class="form-control" value="{{ search_criteria.get('country', '') }}">
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="/" class="btn btn-secondary">Clear Form</a>
+                        <button class="btn btn-primary px-4" type="submit">Disambiguate</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if search_criteria %}
+            <hr class="my-4">
+            <div class="alert alert-info">
+                <h5 class="alert-heading">Search Results</h5>
+                Filtering for authors matching:
+                <ul>
+                    {% for key, value in search_criteria.items() if value %}
+                        <li><strong>{{ key|replace('_', ' ')|title }}:</strong> {{ value }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <p>Found <strong>{{ total_publications }}</strong> potential publications across <strong>{{ cluster_count }}</strong> unique author(s).</p>
+        {% endif %}
+
+        {% for cluster_id, publications in results.items() %}
+            <div class="card shadow-sm author-cluster">
+                <div class="card-header bg-light">
+                    <strong>Potential Author {{ loop.index }}</strong> ({{ publications|length }} publications)
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for pub in publications %}
+                            <li class="list-group-item">
+                                <h6 class="mb-1">{{ pub.title }} ({{ pub.year }})</h6>
+                                <div class="publication-details">
+                                    <strong>Author As Written:</strong> {{ pub.author_name }} <br>
+                                    <strong>Venue:</strong> {{ pub.venue }} <br>
+                                    <strong>Affiliation:</strong> {{ pub.affiliation }}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Author Disambiguation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .container { max-width: 900px; }
+        .header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+        }
+        .card { margin-bottom: 1.5rem; }
+        .author-cluster { border-left: 5px solid #0d6efd; }
+        .publication-details { font-size: 0.9rem; color: #6c757d; }
+        .form-label { font-weight: 500; }
+        .keyword-badge { font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <div class="header text-center">
+            <h1>Advanced Author Disambiguation</h1>
+            <p class="lead">Provide author details to find and group their publications.</p>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Search Criteria</h5>
+                <form action="/" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="last_name" class="form-label">Last Name</label>
+                            <input type="text" id="last_name" name="last_name" class="form-control" value="{{ search_criteria.get('last_name', '') }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="first_name" class="form-label">First Name / Initial(s)</label>
+                            <input type="text" id="first_name" name="first_name" class="form-control" value="{{ search_criteria.get('first_name', '') }}">
+                        </div>
+                        <div class="col-12">
+                            <label for="affiliation" class="form-label">Affiliation (e.g., Stanford University)</label>
+                            <input type="text" id="affiliation" name="affiliation" class="form-control" value="{{ search_criteria.get('affiliation', '') }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" name="email" class="form-control" value="{{ search_criteria.get('email', '') }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="keyword" class="form-label">Keyword</label>
+                            <input type="text" id="keyword" name="keyword" class="form-control" value="{{ search_criteria.get('keyword', '') }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="oid" class="form-label">ORCID (OID)</label>
+                            <input type="text" id="oid" name="oid" class="form-control" value="{{ search_criteria.get('oid', '') }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rid" class="form-label">ResearcherID (RID)</label>
+                            <input type="text" id="rid" name="rid" class="form-control" value="{{ search_criteria.get('rid', '') }}">
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="/" class="btn btn-secondary">Clear Form</a>
+                        <button class="btn btn-primary px-4" type="submit">Disambiguate</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if search_criteria %}
+            <hr class="my-4">
+            <div class="alert alert-info">
+                <h5 class="alert-heading">Search Results</h5>
+                Filtering for authors matching:
+                <ul>
+                    {% for key, value in search_criteria.items() if value %}
+                        <li><strong>{{ key|replace('_', ' ')|title }}:</strong> {{ value }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <p>Found <strong>{{ total_publications }}</strong> potential publications across <strong>{{ cluster_count }}</strong> unique author(s).</p>
+        {% endif %}
+
+        {% for cluster_id, publications in results.items() %}
+            <div class="card shadow-sm author-cluster">
+                <div class="card-header bg-light">
+                    <strong>Potential Author {{ loop.index }}</strong> ({{ publications|length }} publications)
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for pub in publications %}
+                            <li class="list-group-item">
+                                <h6 class="mb-1">{{ pub.title }} ({{ pub.year }})</h6>
+                                <div class="publication-details">
+                                    <strong>Author:</strong> {{ pub.author_name }} <br>
+                                    <strong>Affiliation:</strong> {{ pub.affiliation }} <br>
+                                    <strong>Venue:</strong> {{ pub.venue }} <br>
+                                    <span class="badge bg-secondary keyword-badge">OID: {{ pub.OID }}</span>
+                                    <span class="badge bg-secondary keyword-badge">RID: {{ pub.RID }}</span>
+                                    <br>
+                                    <strong>Keywords:</strong> <span class="text-muted">{{ pub.Keyword }}</span>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+</body>
+</html>
