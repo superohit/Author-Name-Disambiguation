@@ -2,7 +2,7 @@
 
 ## 🌟 Overview
 
-The **Advanced Author Disambiguation (AND)** project is designed to accurately identify unique authors across a collection of publications, resolving ambiguity caused by shared names (homonyms) and name variations (synonyms). This is critical for maintaining accurate citation metrics and research profiles in academic databases.
+The **Author Name Disambiguation (AND)** project is designed to accurately identify unique authors across a collection of publications, resolving ambiguity caused by shared names (homonyms) and name variations (synonyms). This is critical for maintaining accurate citation metrics and research profiles in academic databases.
 
 The system uses a machine learning approach, specifically a **LightGBM classifier** combined with graph-based clustering, to group publications based on a rich set of similarity features derived from publication metadata.
 
@@ -83,3 +83,4 @@ This project relies on the following key Python libraries:
 *   **`networkx`**: Graph-based clustering.
 *   **`lightgbm`**: Core classification model.
 *   **`scikit-learn`** and **`python-Levenshtein`**: Feature calculation and machine learning utilities.
+
