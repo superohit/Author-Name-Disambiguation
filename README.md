@@ -82,6 +82,8 @@ This project relies on the following key Python libraries:
 *   **`sentence-transformers`**: Generating SBERT embeddings.
 *   **`networkx`**: Graph-based clustering.
 *   **`lightgbm`**: Core classification model.
+*   **`Jaro Winkler`** and **`Cosine Similarity`**: Similarity Scheme.
 *   **`scikit-learn`** and **`python-Levenshtein`**: Feature calculation and machine learning utilities.
+
 
 
